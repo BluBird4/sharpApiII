@@ -4,38 +4,40 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const sharp_1 = __importDefault(require("sharp"));
-const resize = express_1.default.Router();
-const app = (0, express_1.default)();
+const fs_1 = __importDefault(require("fs"));
 const port = 8080; // default port to listen
-let name = "";
-let height = 0;
-let width = 0;
-// image
-const image = 'unsplash.jpg';
-// cropped image dist
-const out = 'resized.jpg';
-// check wether a url is of correct format or not before handling it ?
-// link between home page too
-app.get("/sharpapi/filname/:name/height/:height/width/:width", (req, res) => {
-    res.send(req.params);
-    name = req.params.name;
-    height = (req.params.height);
-    width = (req.params.width);
-    console.log(name);
-    console.log(height);
-    console.log(width);
+const sharp_1 = __importDefault(require("sharp"));
+const app = (0, express_1.default)();
+app.get("/api/images", (req, res) => {
+    const heigh = (+req.query.height);
+    const widt = (+req.query.width);
+    const filename = req.query.filename;
+    if (!filename) {
+        res.send("Image name not provided");
+    }
+    else if (filename.split(".")[1] !== "jpg") {
+        res.send("We only support .jpg images at the moment");
+    }
+    else {
+        const filepath = filename;
+        console.log(filepath);
+        const exists = fs_1.default.existsSync(filepath);
+        console.log(exists);
+        if (exists) {
+            res.send((0, sharp_1.default)(filepath).extract({ width: widt, height: heigh, left: 60, top: 40 }).toFile(filename + "" + widt + "x" + heigh).then(function (newFileInfo) {
+                console.log("image resized");
+            }).catch(function (err) {
+                console.log("Error detected");
+            }));
+        }
+        if (!exists) {
+            res.send("Doesn't exist");
+        }
+    }
 });
-app.get("/sharp", (req, res) => {
-    res.send((0, sharp_1.default)(image).extract({ width: 1000, height: 600, left: 60, top: 40 }).toFile(out).then(function (newFileInfo) {
-        console.log("image resized");
-    }).catch(function (err) {
-        console.log("Error detected");
-    }));
-});
+// start the Express server
 app.listen(port, () => {
     // tslint:disable-next-line:no-console
     console.log(`server started at http://localhost:${port}`);
 });
-exports.default = resize;
 //# sourceMappingURL=resize.js.map
