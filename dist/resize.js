@@ -23,15 +23,27 @@ app.get("/api/images", (req, res) => {
         console.log(filepath);
         const exists = fs_1.default.existsSync(filepath);
         console.log(exists);
+        const jpname = filename.split(".")[0];
+        const name = jpname + "x" + widt + "x" + heigh + ".jpg";
         if (exists) {
-            res.send((0, sharp_1.default)(filepath).extract({ width: widt, height: heigh, left: 60, top: 40 }).toFile(filename + "" + widt + "x" + heigh).then(function (newFileInfo) {
-                console.log("image resized");
-            }).catch(function (err) {
-                console.log("Error detected");
-            }));
+            const searchname = jpname + "x" + widt + "x" + heigh + ".jpg";
+            const exist = fs_1.default.existsSync(searchname);
+            if (exist) {
+                const rsss = __dirname + "/" + searchname;
+                res.sendFile(rsss);
+            }
+            else {
+                (0, sharp_1.default)(filepath).extract({ width: widt, height: heigh, left: 60, top: 40 }).toFile(name).then(function (newFileInfo) {
+                    console.log("image resized");
+                }).catch(function (err) {
+                    console.log("Error detected");
+                });
+                const rss = __dirname + "/" + name;
+                res.sendFile(rss);
+            }
         }
         if (!exists) {
-            res.send("Doesn't exist");
+            res.send("File Doesn't exist");
         }
     }
 });
