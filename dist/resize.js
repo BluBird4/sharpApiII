@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8,7 +17,7 @@ const fs_1 = __importDefault(require("fs"));
 const port = 8080; // default port to listen
 const sharp_1 = __importDefault(require("sharp"));
 const app = (0, express_1.default)();
-app.get("/api/images", (req, res) => {
+app.get("/api/images", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const heigh = (+req.query.height);
     const widt = (+req.query.width);
     const filename = req.query.filename;
@@ -33,11 +42,23 @@ app.get("/api/images", (req, res) => {
                 res.sendFile(rsss);
             }
             else {
-                (0, sharp_1.default)(filepath).extract({ width: widt, height: heigh, left: 60, top: 40 }).toFile(name).then(function (newFileInfo) {
-                    console.log("image resized");
-                }).catch(function (err) {
-                    console.log("Error detected");
-                });
+                // working on the async and await functions in the code : Filepath name
+                function resizeImage() {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        try {
+                            yield (0, sharp_1.default)(filepath)
+                                .resize({
+                                width: widt,
+                                height: heigh
+                            })
+                                .toFile(name);
+                        }
+                        catch (error) {
+                            console.log(error);
+                        }
+                    });
+                }
+                yield resizeImage();
                 const rss = __dirname + "/" + name;
                 res.sendFile(rss);
             }
@@ -46,7 +67,7 @@ app.get("/api/images", (req, res) => {
             res.send("File Doesn't exist");
         }
     }
-});
+}));
 // start the Express server
 app.listen(port, () => {
     // tslint:disable-next-line:no-console

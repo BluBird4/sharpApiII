@@ -6,7 +6,7 @@ import sharp from "sharp";
 
 const app = express();
 
-app.get("/api/images", (req ,res ) => {
+app.get("/api/images", async (req ,res ) => {
     const heigh:number = (+req.query.height);
     const widt:number = (+req.query.width);
     const filename = req.query.filename as string;
@@ -33,15 +33,24 @@ app.get("/api/images", (req ,res ) => {
                 res.sendFile(rsss);
             }
             else{
+                // working on the async and await functions in the code : Filepath name
+               async function resizeImage() {
+                    try {
+                      await sharp(filepath)
+                        .resize({
+                          width: widt,
+                          height: heigh
+                        })
+                        .toFile(name);
+                    } catch (error) {
+                      console.log(error);
+                    }
+                  }
 
-                sharp(filepath).extract({width: widt, height : heigh ,left:60,top:40}).toFile(name).then(function(newFileInfo){
-                    console.log("image resized");
 
-                }).catch(function(err){
-                    console.log("Error detected");
-                })
+                await resizeImage();
 
-                const rss = __dirname + "/" + name
+                const rss = __dirname + "/" + name;
                 res.sendFile(rss);
 
             }
