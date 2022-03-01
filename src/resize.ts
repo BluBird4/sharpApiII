@@ -1,12 +1,11 @@
-import express from "express";
+import express , { Request , Response } from "express";
 import fs from "fs";
 import path from "path"
 const port = 8080; // default port to listen
 import sharp from "sharp";
+const router = express.Router();
 
-const app = express();
-
-app.get("/api/images", async (req ,res ) => {
+router.get("/api/images", async (req : Request ,res : Response ) => {
     const heigh:number = (+req.query.height);
     const widt:number = (+req.query.width);
     const filename = req.query.filename as string;
@@ -62,10 +61,12 @@ app.get("/api/images", async (req ,res ) => {
 }
 )
 
+/*
 // start the Express server
-app.listen( port, () => {
+router.listen( port, () => {
     // tslint:disable-next-line:no-console
     console.log( `server started at http://localhost:${ port }` );
 } );
+*/
 
-export default app;
+export default router;
