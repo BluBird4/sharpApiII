@@ -15,19 +15,17 @@ describe("Test", () => {
 describe("Test the files query", () => {
     const request = (0, supertest_1.default)(resize_1.default);
     it("Shouldn't allow wrong urls", () => {
-        request
-            .get("/api/images?imagename=ttt")
-            .expect(400);
+        request.get("/api/images?imagename=ttt").expect(400);
     });
 });
+// You are checking wether the following url exists or not ; check if the file exists or not !
 describe("Actually creates files", () => {
     const request = (0, supertest_1.default)(resize_1.default);
     it("Creates a file with the required dimensions", () => {
         const filepath = path_1.default.join(__dirname, "..", "..", "dist", "imagex400x400.jpg");
         request
             .get("/api/images?filename=image.jpg&height=400&width=400")
-            .expect(200);
-        (fs_1.default.existsSync(filepath));
+            .expect(fs_1.default.existsSync(filepath));
     });
 });
 //# sourceMappingURL=resizeSpec.js.map

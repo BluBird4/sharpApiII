@@ -6,10 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const port = 8080; // default port to listen
-// define a route handler for the default home page
-app.get("/", (req, res) => {
-    res.send("Hello world!");
-});
+const resize_1 = __importDefault(require("./resize"));
+app.use("/api", resize_1.default);
 // start the Express server
 app.listen(port, () => {
     // tslint:disable-next-line:no-console
