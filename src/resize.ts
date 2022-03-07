@@ -14,15 +14,22 @@ async function middleware(req: Request, res: Response, next: NextFunction){
   } else if (filename.split(".")[1] !== "jpg") {
     res.send("We only support .jpg images at the moment");
   } else {
-    const filepath = filename;
+    const filepath = path.join(__dirname,"..","images",filename);
     const exists = fs.existsSync(filepath);
     const jpname = filename.split(".")[0];
-    const name = jpname + "x" + widt + "x" + heigh + ".jpg";
+    const initial = jpname + "x" + widt + "x" + heigh + ".jpg";
+    const name = path.join(__dirname,"..","images",initial);
     if (exists) {
       const searchname = jpname + "x" + widt + "x" + heigh + ".jpg";
       const exist = fs.existsSync(searchname);
       if (exist) {
-        const rsss = __dirname + "/" + searchname;
+        const rsss = path.join(
+          __dirname,
+          "..",
+          "images",
+          searchname
+        );
+        console.log(rsss);
         res.sendFile(rsss);
       } else {
          // working on the async and await functions in the code : Filepath name
@@ -41,7 +48,13 @@ async function middleware(req: Request, res: Response, next: NextFunction){
 
         await resizeImage();
 
-        const rss = __dirname + "/" + name;
+        const rss = path.join(
+          __dirname,
+          "..",
+          "images",
+          searchname
+        );
+
         res.sendFile(rss);
       }
     }

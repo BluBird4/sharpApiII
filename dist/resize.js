@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const sharp_1 = __importDefault(require("sharp"));
 const route = express_1.default.Router();
 function middleware(req, res, next) {
@@ -28,15 +29,17 @@ function middleware(req, res, next) {
             res.send("We only support .jpg images at the moment");
         }
         else {
-            const filepath = filename;
+            const filepath = path_1.default.join(__dirname, "..", "images", filename);
             const exists = fs_1.default.existsSync(filepath);
             const jpname = filename.split(".")[0];
-            const name = jpname + "x" + widt + "x" + heigh + ".jpg";
+            const initial = jpname + "x" + widt + "x" + heigh + ".jpg";
+            const name = path_1.default.join(__dirname, "..", "images", initial);
             if (exists) {
                 const searchname = jpname + "x" + widt + "x" + heigh + ".jpg";
                 const exist = fs_1.default.existsSync(searchname);
                 if (exist) {
-                    const rsss = __dirname + "/" + searchname;
+                    const rsss = path_1.default.join(__dirname, "..", "images", searchname);
+                    console.log(rsss);
                     res.sendFile(rsss);
                 }
                 else {
@@ -57,7 +60,7 @@ function middleware(req, res, next) {
                         });
                     }
                     yield resizeImage();
-                    const rss = __dirname + "/" + name;
+                    const rss = path_1.default.join(__dirname, "..", "images", searchname);
                     res.sendFile(rss);
                 }
             }
